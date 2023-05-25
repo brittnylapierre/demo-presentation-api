@@ -3,7 +3,7 @@
 import ijson
 import json
   
-iiif_url = "http://10.5.0.5:5000/iiif"
+iiif_url = "http://10.5.0.5:5000/iiif/"
 
 def iiif_annotation(manifest, image):
   return {

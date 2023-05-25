@@ -6,6 +6,4 @@ RUN pip install flask
 RUN pip install couchdb
 COPY ./api.py /srv
 ENV FLASK_APP=api
-#RUN export FLASK_APP=api
-#CMD ["flask","run"]
 ENTRYPOINT FLASK_APP=api flask run --host=0.0.0.0

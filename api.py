@@ -5,7 +5,7 @@ couch = couchdb.Server('http://admin:YOURPASSWORD@couchserver:5984/')
 db = couch['manifest'] #select the database
 app = Flask(__name__)
 
-iiif_url = 'https://localhost:3000/iiif/'
+iiif_url = "http://10.5.0.5:5000/iiif/"
 
 @app.route('/')
 def index():
@@ -22,12 +22,12 @@ def manifest(manifest_id):
     # Get Manifest
     id = iiif_url+manifest_id+'/manifest'
     manifest = { 'error' : 'Not found' } 
-    for row in db.view('id/new-view', key=id, include_docs=True):
+    for row in db.view('iiif/id', key=id, include_docs=True):
         manifest = row['doc']
 
     # Delete Couch Fields
-    del manifest['_id']
-    del manifest['_rev']
+    #del manifest['_id']
+    #del manifest['_rev']
 
     return manifest
 
@@ -38,14 +38,14 @@ def canvas(manifest_id, canvas_id_1, canvas_id_2):
     # Get Manifest
     id = iiif_url+manifest_id+'/manifest'
     manifest = None 
-    for row in db.view('id/new-view', key=id, include_docs=True):
+    for row in db.view('iiif/id', key=id, include_docs=True):
         manifest = row['doc']
 
     # Get Canvas
     canvas={ 'error' : 'Not found' }
 
     for item in manifest['items']:
-        if item['id'] == 'http://localhost:3000/iiif/'+manifest_id+'/canvas/'+canvas_id_1+'/'+canvas_id_2:
+        if item['id'] == iiif_url+manifest_id+'/canvas/'+canvas_id_1+'/'+canvas_id_2:
             canvas = item
             break
 
@@ -59,7 +59,7 @@ def annotationpage(manifest_id, canvas_id_1, canvas_id_2, annotationpage_id):
     # Get Manifest
     id = iiif_url+manifest_id+'/manifest'
     manifest = None 
-    for row in db.view('id/new-view', key=id, include_docs=True):
+    for row in db.view('iiif/id', key=id, include_docs=True):
         manifest = row['doc']
     
 
@@ -67,9 +67,9 @@ def annotationpage(manifest_id, canvas_id_1, canvas_id_2, annotationpage_id):
     annotationpage={ 'error' : 'Not found' }
 
     for item in manifest['items']:
-        if item['id'] == 'http://localhost:3000/iiif/'+manifest_id+'/canvas/'+canvas_id_1+'/'+canvas_id_2:
+        if item['id'] == iiif_url+manifest_id+'/canvas/'+canvas_id_1+'/'+canvas_id_2:
             for canvas_item in item['items']:
-                if canvas_item['id'] == 'http://localhost:3000/iiif/'+manifest_id+'/annotationpage/'+canvas_id_1+'/'+canvas_id_2+'/'+annotationpage_id:
+                if canvas_item['id'] == iiif_url+manifest_id+'/annotationpage/'+canvas_id_1+'/'+canvas_id_2+'/'+annotationpage_id:
                     annotationpage = canvas_item
                     break
             else:
@@ -85,7 +85,7 @@ def annotation(manifest_id, canvas_id_1, canvas_id_2, annotationpage_id, annotat
     # Get Manifest
     id = iiif_url+manifest_id+'/manifest'
     manifest = None 
-    for row in db.view('id/new-view', key=id, include_docs=True):
+    for row in db.view('iiif/id', key=id, include_docs=True):
         manifest = row['doc']
     
 
@@ -93,11 +93,11 @@ def annotation(manifest_id, canvas_id_1, canvas_id_2, annotationpage_id, annotat
     annotation={ 'error' : 'Not found' }
 
     for item in manifest['items']:
-        if item['id'] == 'http://localhost:3000/iiif/'+manifest_id+'/canvas/'+canvas_id_1+'/'+canvas_id_2:
+        if item['id'] == iiif_url+manifest_id+'/canvas/'+canvas_id_1+'/'+canvas_id_2:
             for canvas_item in item['items']:
-                if canvas_item['id'] == 'http://localhost:3000/iiif/'+manifest_id+'/annotationpage/'+canvas_id_1+'/'+canvas_id_2+'/'+annotationpage_id:
+                if canvas_item['id'] == iiif_url+manifest_id+'/annotationpage/'+canvas_id_1+'/'+canvas_id_2+'/'+annotationpage_id:
                     for annotationpage_item in canvas_item['items']:
-                        if annotationpage_item['id'] == 'http://localhost:3000/iiif/'+manifest_id+'/annotation/'+canvas_id_1+'/'+canvas_id_2+'/'+annotationpage_id+'/'+annotation_id:
+                        if annotationpage_item['id'] == iiif_url+manifest_id+'/annotation/'+canvas_id_1+'/'+canvas_id_2+'/'+annotationpage_id+'/'+annotation_id:
                             annotation = annotationpage_item
                             break
                     else:
