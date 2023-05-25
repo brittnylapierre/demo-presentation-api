@@ -1,0 +1,4 @@
+setup/accessdb.json
+setup/manifests/
+__pycache__
+dbdata/

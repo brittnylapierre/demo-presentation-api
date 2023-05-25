@@ -1,0 +1,33 @@
+# docker-compose.yaml
+version: '3'
+
+services:
+  web:
+    build: '.'
+    ports:
+      - '5000:5000'
+    depends_on:
+      - couchserver
+    networks:
+      blapp:
+        ipv4_address: 10.5.0.5
+  couchserver:
+    image: couchdb
+    restart: always
+    ports:
+      - "5984:5984"
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=YOURPASSWORD
+    volumes:
+        - ./dbdata:/opt/couchdb/data
+    networks:
+      blapp:
+        ipv4_address: 10.5.0.6
+networks:
+  blapp:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.5.0.0/16
+         gateway: 10.5.0.1
