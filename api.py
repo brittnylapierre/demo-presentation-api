@@ -26,8 +26,10 @@ def manifest(manifest_id):
         manifest = row['doc']
 
     # Delete Couch Fields
-    #del manifest['_id']
-    #del manifest['_rev']
+    if '_id' in manifest:
+        del manifest['_id']
+    if '_rev' in manifest:
+        del manifest['_rev']
 
     return manifest
 
