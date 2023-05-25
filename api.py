@@ -11,12 +11,12 @@ iiif_url = "http://10.5.0.5:5000/iiif/"
 def index():
     return '<p>Hello, World!</p>'
 
-@app.route('/iiif/collection/<collection_id>')
+@app.route('/iiif/<collection_id>/collection')
 def collection(collection_id):
     return '<p>Hello, Collection!</p>'
 
 
-@app.route('/iiif/manifest/<manifest_id>')
+@app.route('/iiif/<manifest_id>/manifest')
 def manifest(manifest_id):
 
     # Get Manifest
