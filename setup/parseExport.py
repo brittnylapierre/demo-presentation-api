@@ -4,18 +4,20 @@ import ijson
 import json
   
 iiif_url = "http://10.5.0.5:5000/iiif/"
+image_server_url = 'https://image-tor.canadiana.ca/iiif/2/'
 
 def iiif_annotation(manifest, image):
+  parsed_id = image['id'].replace("/", "%2f")
   return {
     'id'         : iiif_url+manifest['slug']+'/annotation/'+image['id']+"/main/image",
     'type'       : 'Annotation',
     'motivation' : 'painting',
     'body'       : {
-      'id'       : 'https://image-tor.canadiana.ca/iiif/2/'+image['id']+'/full/max/0/default.jpg',
+      'id'       : image_server_url+parsed_id+'/full/max/0/default.jpg',
       'type'     : 'Image',
       'format'   : 'image/jpeg',
       'service'  : [ {
-          'id'      : 'https://image-tor.canadiana.ca/iiif/2/'+image['id'],
+          'id'      : image_server_url+parsed_id,
           'type'    : 'ImageService2',
           'profile' : 'level2'
         }
@@ -23,7 +25,7 @@ def iiif_annotation(manifest, image):
       'height' : image['canonicalMasterHeight'],
       'width'  : image['canonicalMasterWidth']
     },
-    'target'   : iiif_url+manifest['slug']+'/canvas/'+image['id']
+    'target'   : iiif_url+manifest['slug']+'/canvas/'+parsed_id
   }
 
 def iiif_annotation_page(manifest, image):
@@ -35,8 +37,9 @@ def iiif_annotation_page(manifest, image):
   }
 
 def iiif_thumbnail(image):
+  parsed_id = image['id'].replace("/", "%2f")
   return {
-    'id'     : 'https://image-tor.canadiana.ca/iiif/2/'+image['id']+'/full/max/0/default.jpg',
+    'id'     : image_server_url+parsed_id+'/full/max/0/default.jpg',
     'type'   : 'Image',
     'format' : 'image/jpeg'
   }
@@ -62,11 +65,15 @@ def iiif_manifest(manifest, images):
   for image in images:
     items.append(iiif_canvas(manifest,image))
 
+  label = "No label set"
+  if 'label' in manifest and 'none' in manifest['label']:
+    label = manifest['label']['none']
+
   return {
     '@context' : 'https://iiif.io/api/presentation/3/context.json',
     'id'       : iiif_url+manifest['slug']+'/manifest',
     'type'     : 'Manifest',
-    'label'    : { 'none' : [ manifest['label'] ]},
+    'label'    : { 'none' : [ label ]},
     'provider' : [ {
         'id'    : 'https://www.crkn-rcdr.ca/',
         'type'  : 'Agent',
@@ -98,10 +105,16 @@ with open('accessdb.json', 'rb') as f:
       if 'canvases' in manifest:
         images = []
         # 'canvases':[{'id':'69429/c0cc0ts7gj64','label':{'none':'Image 1'}} ... ]
+
         for canvas in manifest['canvases']:
+
+          label = "image"
+          if 'label' in canvas and 'none' in canvas['label']:
+            label = canvas['label']['none']
+
           images.append( {
             'id'                    : canvas['id'], # todo url escape
-            'label'                 : canvas['label'],
+            'label'                 : label,
             'canonicalMasterHeight' : 0, # todo
             'canonicalMasterWidth'  : 0
           })

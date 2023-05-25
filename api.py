@@ -1,9 +1,13 @@
 from flask import Flask
+from flask_cors import CORS, cross_origin
 import couchdb
 
-couch = couchdb.Server('http://admin:YOURPASSWORD@couchserver:5984/')
-db = couch['manifest'] #select the database
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+couch = couchdb.Server('http://admin:YOURPASSWORD@couchserver:5984/')
+db = couch['manifest'] 
 
 iiif_url = "http://10.5.0.5:5000/iiif/"
 
@@ -12,11 +16,13 @@ def index():
     return '<p>Hello, World!</p>'
 
 @app.route('/iiif/<collection_id>/collection')
+@cross_origin()
 def collection(collection_id):
     return '<p>Hello, Collection!</p>'
 
 
 @app.route('/iiif/<manifest_id>/manifest')
+@cross_origin()
 def manifest(manifest_id):
 
     # Get Manifest
@@ -35,6 +41,7 @@ def manifest(manifest_id):
 
 
 @app.route('/iiif/<manifest_id>/canvas/<canvas_id_1>/<canvas_id_2>')
+@cross_origin()
 def canvas(manifest_id, canvas_id_1, canvas_id_2):
 
     # Get Manifest
@@ -54,8 +61,8 @@ def canvas(manifest_id, canvas_id_1, canvas_id_2):
     return canvas
 
 
-# 'id':http://localhost:3000/iiif/oocihm.9_03520/annotationpage/69429/c01v5bc4998v/main
 @app.route('/iiif/<manifest_id>/annotationpage/<canvas_id_1>/<canvas_id_2>/<annotationpage_id>')
+@cross_origin()
 def annotationpage(manifest_id, canvas_id_1, canvas_id_2, annotationpage_id):
 
     # Get Manifest
@@ -82,6 +89,7 @@ def annotationpage(manifest_id, canvas_id_1, canvas_id_2, annotationpage_id):
 
 
 @app.route('/iiif/<manifest_id>/annotation/<canvas_id_1>/<canvas_id_2>/<annotationpage_id>/<annotation_id>')
+@cross_origin()
 def annotation(manifest_id, canvas_id_1, canvas_id_2, annotationpage_id, annotation_id):
 
     # Get Manifest
