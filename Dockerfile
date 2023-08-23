@@ -7,4 +7,4 @@ RUN pip install flask-cors
 RUN pip install couchdb
 COPY ./api.py /srv
 ENV FLASK_APP=api
-ENTRYPOINT FLASK_APP=api flask run --host=0.0.0.0
+ENTRYPOINT ./wait-for-it.sh couchserver:5984 FLASK_APP=api flask run --host=0.0.0.0

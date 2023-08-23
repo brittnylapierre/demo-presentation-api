@@ -1,4 +1,5 @@
 setup/accessdb.json
+setup/canvases.json
 setup/manifests/
-__pycache__
 dbdata/
+__pycache__
