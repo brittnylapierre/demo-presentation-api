@@ -99,29 +99,39 @@ def iiif_manifest(manifest, images):
 
 # Iterating through the json
 with open('accessdb.json', 'rb') as f:
-    for row in ijson.items(f, 'rows.item'):
-      manifest = row['doc']
+    with open('canvases.json', 'rb') as c:
+      for row in ijson.items(f, 'rows.item'):
+        manifest = row['doc']
 
-      if 'canvases' in manifest:
-        images = []
-        # 'canvases':[{'id':'69429/c0cc0ts7gj64','label':{'none':'Image 1'}} ... ]
+        if 'canvases' in manifest:
+          images = []
+          # 'canvases':[{'id':'69429/c0cc0ts7gj64','label':{'none':'Image 1'}} ... ]
 
-        for canvas in manifest['canvases']:
+          for canvas in manifest['canvases']:
 
-          label = "image"
-          if 'label' in canvas and 'none' in canvas['label']:
-            label = canvas['label']['none']
+            width = 0
+            height = 0
 
-          images.append( {
-            'id'                    : canvas['id'], # todo url escape
-            'label'                 : label,
-            'canonicalMasterHeight' : 0, # todo
-            'canonicalMasterWidth'  : 0
-          })
-        manifest_json = iiif_manifest(manifest, images)
-        #print(manifest_json)
-        f = open('./manifests/' + manifest['slug'] + '.json', 'w')
-        manifest_str = json.dumps(manifest_json)
-        f.write(manifest_str)
-        f.close()
+            for data in ijson.items(c, 'rows.item'):
+              if data["id"] == canvas["id"] and 'key' in data and len(data['key']) == 2:
+                width = data['key'][0]
+                height = data['key'][1]
+
+
+            label = "image"
+            if 'label' in canvas and 'none' in canvas['label']:
+              label = canvas['label']['none']
+
+            images.append( {
+              'id'                    : canvas['id'], # todo url escape
+              'label'                 : label,
+              'canonicalMasterHeight' : width, # todo
+              'canonicalMasterWidth'  : height
+            })
+          manifest_json = iiif_manifest(manifest, images)
+          #print(manifest_json)
+          f2 = open('./manifests/' + manifest['slug'] + '.json', 'w')
+          manifest_str = json.dumps(manifest_json)
+          f2.write(manifest_str)
+          f2.close()
 
