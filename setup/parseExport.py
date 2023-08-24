@@ -97,41 +97,62 @@ def iiif_manifest(manifest, images):
   }
 
 
+print("1")
+
+# Pre process cause it's too big
+#canvasdict = {}
+#with open('canvases.json', 'rb') as c:
+#  for canvas in ijson.items(c, 'rows.item'):
+#    canvasdict[canvas["id"]] = canvas["key"]
+
+print("2")
+#f = open('./canvascleaned.json', 'w')
+#canvasdict_str = json.dumps(canvasdict)
+#f.write(canvasdict_str)
+#f.close()
+#print("3")
+
+
 # Iterating through the json
 with open('accessdb.json', 'rb') as f:
-    with open('canvases.json', 'rb') as c:
-      for row in ijson.items(f, 'rows.item'):
-        manifest = row['doc']
+  with open('canvascleaned.json', 'rb') as canvasdict:
+    for row in ijson.items(f, 'rows.item'):
+      manifest = row['doc']
 
-        if 'canvases' in manifest:
-          images = []
-          # 'canvases':[{'id':'69429/c0cc0ts7gj64','label':{'none':'Image 1'}} ... ]
+      if 'canvases' in manifest:
+        images = []
+        # 'canvases':[{'id':'69429/c0cc0ts7gj64','label':{'none':'Image 1'}} ... ]
 
-          for canvas in manifest['canvases']:
+        for canvas in manifest['canvases']:
 
-            width = 0
-            height = 0
+          width = 0
+          height = 0
 
-            for data in ijson.items(c, 'rows.item'):
-              if data["id"] == canvas["id"] and 'key' in data and len(data['key']) == 2:
-                width = data['key'][0]
-                height = data['key'][1]
+          try:
+            print(canvas["id"])
+            data = canvasdict[canvas["id"]]
+            print(data)
+            if len(data) == 2:
+              width = data[0]
+              height = data[1]
+          except Exception as e: print(e)
 
+          label = "image"
+          if 'label' in canvas and 'none' in canvas['label']:
+            label = canvas['label']['none']
 
-            label = "image"
-            if 'label' in canvas and 'none' in canvas['label']:
-              label = canvas['label']['none']
+          images.append( {
+            'id'                    : canvas['id'], # todo url escape
+            'label'                 : label,
+            'canonicalMasterHeight' : width,
+            'canonicalMasterWidth'  : height
+          })
 
-            images.append( {
-              'id'                    : canvas['id'], # todo url escape
-              'label'                 : label,
-              'canonicalMasterHeight' : width, # todo
-              'canonicalMasterWidth'  : height
-            })
-          manifest_json = iiif_manifest(manifest, images)
-          #print(manifest_json)
-          f2 = open('./manifests/' + manifest['slug'] + '.json', 'w')
-          manifest_str = json.dumps(manifest_json)
-          f2.write(manifest_str)
-          f2.close()
+        print("4")
+        manifest_json = iiif_manifest(manifest, images)
+        f = open('./manifests/' + manifest['slug'] + '.json', 'w')
+        manifest_str = json.dumps(manifest_json)
+        f.write(manifest_str)
+        f.close()
 
+print("5")
