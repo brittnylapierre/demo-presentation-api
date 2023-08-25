@@ -10,7 +10,8 @@ path = "./manifests"
 dir = os.listdir( path )
 
 for file in dir:
-    with open("./manifests/" + file) as jsonfile:
-        db_entry = json.load(jsonfile)
-        db.save(db_entry)
-    #break
+    try:
+        with open("./manifests/" + file) as jsonfile:
+            db_entry = json.load(jsonfile)
+            db.save(db_entry)
+    except Exception as e: print(e)

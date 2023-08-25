@@ -2,6 +2,7 @@
 # json file
 import ijson
 import json
+import pandas
   
 iiif_url = "http://10.5.0.5:5000/iiif/"
 image_server_url = 'https://image-tor.canadiana.ca/iiif/2/'
@@ -96,16 +97,12 @@ def iiif_manifest(manifest, images):
     'items'    : items
   }
 
-
-print("1")
-
 # Pre process cause it's too big
 #canvasdict = {}
 #with open('canvases.json', 'rb') as c:
 #  for canvas in ijson.items(c, 'rows.item'):
 #    canvasdict[canvas["id"]] = canvas["key"]
 
-print("2")
 #f = open('./canvascleaned.json', 'w')
 #canvasdict_str = json.dumps(canvasdict)
 #f.write(canvasdict_str)
@@ -113,29 +110,28 @@ print("2")
 #print("3")
 
 
+# Python program to read
+# json file
+ 
+ 
+print("Start!")
+# Opening JSON file
+p = pandas.read_json('canvascleaned.json', orient="index")
+
 # Iterating through the json
 with open('accessdb.json', 'rb') as f:
-  with open('canvascleaned.json', 'rb') as canvasdict:
-    for row in ijson.items(f, 'rows.item'):
+  for row in ijson.items(f, 'rows.item'):
+
+    try:
       manifest = row['doc']
 
       if 'canvases' in manifest:
         images = []
-        # 'canvases':[{'id':'69429/c0cc0ts7gj64','label':{'none':'Image 1'}} ... ]
 
         for canvas in manifest['canvases']:
 
-          width = 0
-          height = 0
-
-          try:
-            print(canvas["id"])
-            data = canvasdict[canvas["id"]]
-            print(data)
-            if len(data) == 2:
-              width = data[0]
-              height = data[1]
-          except Exception as e: print(e)
+          width = int(p.loc[canvas["id"]][0])
+          height = int(p.loc[canvas["id"]][1])
 
           label = "image"
           if 'label' in canvas and 'none' in canvas['label']:
@@ -148,11 +144,12 @@ with open('accessdb.json', 'rb') as f:
             'canonicalMasterWidth'  : height
           })
 
-        print("4")
         manifest_json = iiif_manifest(manifest, images)
         f = open('./manifests/' + manifest['slug'] + '.json', 'w')
         manifest_str = json.dumps(manifest_json)
         f.write(manifest_str)
         f.close()
+      
+    except Exception as e: print(e)
+print("Done!")
 
-print("5")
