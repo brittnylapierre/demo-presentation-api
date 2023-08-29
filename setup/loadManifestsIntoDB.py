@@ -4,6 +4,10 @@ import pandas
 
 # Before Running:
 '''
+docker compose up -d
+
+cd setup
+
 # Curl download canvases to json
 # curl -X GET http://<YOURUSER>:<YOURPASSWORD>@<url>:5984/canvas/_all_docs?include_docs=true > ./canvases.json
 
