@@ -5,12 +5,12 @@ import pandas
 # Before Running:
 '''
 # Curl download canvases to json
-# curl -X GET http://<YOURUSER>:<YOURPASSWORD>@jarlsberg.tor.c7a.ca:5984/canvas/_all_docs?include_docs=true > ./canvases.json
+# curl -X GET http://<YOURUSER>:<YOURPASSWORD>@<url>:5984/canvas/_all_docs?include_docs=true > ./canvases.json
 
 python3 parseCanvases.py
 
 # Curl download access to json
-# curl -X GET http://<YOURUSER>:<YOURPASSWORD>@jarlsberg.tor.c7a.ca:5984/access/_all_docs?include_docs=true > ./accessdb.json
+# curl -X GET http://<YOURUSER>:<YOURPASSWORD>@<url>:5984/access/_all_docs?include_docs=true > ./accessdb.json
 '''
 
 print("Start!")
