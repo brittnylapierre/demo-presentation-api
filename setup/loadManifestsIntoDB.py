@@ -15,6 +15,8 @@ python3 parseCanvases.py
 
 # Curl download access to json
 # curl -X GET http://<YOURUSER>:<YOURPASSWORD>@<url>:5984/access/_all_docs?include_docs=true > ./accessdb.json
+
+python3 loadManifestsIntoDB.py
 '''
 
 print("Start!")
