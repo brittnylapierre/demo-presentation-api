@@ -4,7 +4,7 @@ import pandas
 
 # Before Running:
 '''
-docker compose up -d
+docker-compose up
 
 cd setup
 
@@ -148,6 +148,6 @@ with open('accessdb.json', 'rb') as f:
         manifest_json = iiif_manifest(manifest, images)
         db.save(manifest_json)
       
-    except Exception as e: print(e)
+    except Exception as e: print("error: ", e, row['doc']['id'])
 
 print("Done!")

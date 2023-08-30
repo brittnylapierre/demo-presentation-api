@@ -3,4 +3,5 @@ setup/canvases.json
 setup/canvascleaned.json
 setup/manifests/
 dbdata/
+dbdatam/
 __pycache__
